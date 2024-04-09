@@ -18,6 +18,7 @@ import torchvision.transforms as transforms
 ###################################
 ### new for lab4
 import torch.distributed as dist
+from torch.utils.data.distributed import DistributedSampler
 import torch.optim as optim
 import torch.multiprocessing as mp
 from torch.nn.parallel import DistributedDataParallel as DDP
@@ -123,16 +124,22 @@ def q1(args,dataset):
     '''
     vary gpu configs and batch_sizes
     '''
-    sampler = get_sampler(dataset)
-    dataloader = get_dataloader(sampler,args,b_size=batch)
+    #sampler = get_sampler(dataset)
+    #dataloader = get_dataloader(sampler,args,b_size=batch)
     for gpu_id in gpus_config:
         for batch in batch_size:
             print(f"Current configuration batch size: {batch}, gpus: {len(gpu_id)}")
             model = create_model(args)
-            model = DDP(model,gpu_id) ## gpu_id = [0],[0,1], or [0,1,2,3] 
+            # model = DDP(model,gpu_id) ## gpu_id = [0],[0,1], or [0,1,2,3] 
+            ############################
             world_size = len(gpu_id) 
             setup(rank = 0,world_size = world_size)
+            model = DDP(model,gpu_id)
+            sampler = get_sampler(dataset)
+            dataloader = get_dataloader(dataset,sampler,args,b_size=batch)
+            #get_dataloader(dataset,sampler,args,b_size):
             ############################### 
+
             cross_entropy = nn.CrossEntropyLoss()
             optimizer = optimizer_selection(model= model, opt = args.opt, lr = args.lr)
             ### 
@@ -247,8 +254,8 @@ def create_model(args):
 ### some DDP stuff ### 
 ## basically example code from the pytorch documentation 
 def setup(rank, world_size):
-    #os.environ['MASTER_ADDR'] = 'localhost'
-    #os.environ['MASTER_PORT'] = '12355'
+    os.environ['MASTER_ADDR'] = 'localhost'
+    os.environ['MASTER_PORT'] = '12355'
     # initialize the process group
     dist.init_process_group("nccl", rank=rank, world_size=world_size)
 
@@ -256,7 +263,7 @@ def cleanup():
     dist.destroy_process_group()
 
 def get_sampler(dataset):
-    return dist.DistributedSampler(dataset)
+    return DistributedSampler(dataset) #dist.DistributedSampler(dataset)
 def get_dataloader(dataset,sampler,args,b_size):
     loader = torch.utils.data.DataLoader(
     dataset, batch_size=b_size, shuffle=False, num_workers=args.num_workers,sampler = sampler)
