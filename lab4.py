@@ -169,10 +169,11 @@ def train(model,epoch,criterion,optimizer,device,dataloader):
     epoch_start = time.perf_counter()
     for batch_idx, (inputs, targets) in (enumerate(progress_bar)):#enumerate(trainloader):
         
-        torch.cuda.synchronize()## wait for kernels to finish....
+        #torch.cuda.synchronize()## wait for kernels to finish....
         io_start = time.perf_counter()
         inputs, targets = inputs.to(device), targets.to(device)
-        torch.cuda.synchronize()## wait for kernels to finish....
+        
+        #torch.cuda.synchronize()## wait for kernels to finish....
         io_end = time.perf_counter()
         
         optimizer.zero_grad()
@@ -180,7 +181,7 @@ def train(model,epoch,criterion,optimizer,device,dataloader):
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
-        torch.cuda.synchronize()## wait for kernels to finish....torch.cuda.synchronize()## wait for kernels to finish....
+        #torch.cuda.synchronize()## wait for kernels to finish....torch.cuda.synchronize()## wait for kernels to finish....
         minibatch_end = time.perf_counter()
 
         train_loss += loss.item()
@@ -192,7 +193,7 @@ def train(model,epoch,criterion,optimizer,device,dataloader):
         mini_batch_times.append(minibatch_end-io_end)
         io_times.append(io_end-io_start)
         #print(f"\n minibatch :{minibatch_end-io_end}, io: {io_end-io_start}")
-    torch.cuda.synchronize()## wait for kernels to finish....
+    #torch.cuda.synchronize()## wait for kernels to finish....
     epoch_end = time.perf_counter()
     total_epoch = epoch_end-epoch_start
     print(f"epoch: {epoch} time:{total_epoch} sec")
