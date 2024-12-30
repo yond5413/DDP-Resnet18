@@ -1,6 +1,6 @@
 # Lab 4: Neural Network Implementation
 
-This project implements a neural network using PyTorch and TorchVision. It includes training and evaluation of a ResNet-18 model on the CIFAR-10 dataset. The project allows customization of hyperparameters such as learning rate, optimizer, and computing device.
+This project implements a neural network using PyTorch and TorchVision. It includes training and evaluation of a ResNet-18 model on the CIFAR-10 dataset. The project allows customization of hyperparameters such as learning rate, optimizer, and computing device. In this instance the goal was to compare the performance of the model utilizing various GPU configurations.
 
 ---
 
@@ -24,6 +24,12 @@ python lab4.py
 python lab4.py --lr 0.01 --device cuda --opt adam --c7
 ```
 
+### Experimenting with GPU config
+```bash
+python3 lab4.py --world_config <val>
+```
+
+
 ## **Parameters Desctiption**
 | Parameter      | Description                                                                 | Default Value | Options/Constraints                     |
 |----------------|-----------------------------------------------------------------------------|---------------|-----------------------------------------|
@@ -33,7 +39,7 @@ python lab4.py --lr 0.01 --device cuda --opt adam --c7
 | `--data_path`  | Dataset download directory                                                  | `./data`      | Path to directory                       |
 | `--opt`        | Optimizer selection                                                         | `sgd`         | `sgd`, `nesterov`, `adam`, `adagrad`, `adadelta` |
 | `--c7`         | Disable batch normalization in ResNet-18                                    | `False`       | Set to `True` to disable batch normalization |
-
+|--world_config	 | GPU configuration for DDP                                                   | 0             |	0  (1 GPU), 1 (2 GPUs), 2 (4 GPUs) |
 ---
 
 ## Project Structure
