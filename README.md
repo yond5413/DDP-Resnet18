@@ -71,6 +71,7 @@ Ensure the dataset is downloaded to the correct directory (./data by default).
 
 Experiment with different hyperparameters to observe their impact on performance.
 
-If you encounter GPU memory issues, reduce the batch size or switch to the CPU.
+In order to test various GPU configurations I would suggest utilzing a vm from a cloud service provider like AWS/GCP, but keep in mind the cost be very expensive. In my case I had access to a cluster for a course, so I could request resources via shell scripts and send jobs that way.
+
 
 
